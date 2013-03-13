@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang='no'>
+  <head>
+    <title>PulpAds Test</title>
+    <script src='../lib/pulpads.js'/>
+  </head>
+  <body>
+    <div id='apiBackgroundAd'></div>
+    <div id='content'>
+      <div id='toppbanner'></div>
+      <div id='skyskraper_1'></div>
+    </div>
+
+    <script>
+      pulpads = new PulpAds("apdm", "an")
+      pulpads.loadAds().then(function() {
+        pulpads.Ad("toppbanner", $('#toppbanner'))
+        pulpads.Ad("skyskraper_1", $('#skyskraper_1'))
+      });
+    </script>
+
+  </body>
+</html>
