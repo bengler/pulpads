@@ -1,1 +1,1 @@
-module.exports = require("./lib/pulpads");
+module.exports = require("./src/pulpads");
