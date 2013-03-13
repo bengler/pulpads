@@ -1,3 +1,10 @@
+# Connections to pebbles configured here
+{ServiceSet} = require("pebbles").service
+
+services = new ServiceSet(host: config?.pebbles?.host)
+services.use
+  pulp: 1
+
 $ = require("jquery")
 
 # Connections to pebbles configured here
@@ -17,26 +24,20 @@ class PulpAds
       dfd.resolve(@ads)
     $('#apiBackgroundAd').attr("style", "")
     dfd
+
   Ad: (placement, target_element) ->
-    write = document.write
-    container = $("<div id='#{target_element.attr('id')}_tmp' style='display: none'></div>")
-    $('body').append(container)
-    window.document.write = (string) =>
+    $("##{target_element.attr('id')}_loader").remove()
+    target_element.empty()
+    loader = $("<iframe id='#{target_element.attr('id')}_loader' style='display: none'></iframe>")
+    $("body").append(loader)
+    frame = $("##{target_element.attr('id')}_loader")[0].contentWindow
+    frame.document.write(@ads[placement])
+    frame.document.write = (string) ->
+      html = ""
       try
         html = $(string)
       catch error
-        return console.log error
-      src = html.attr("src")
-      if src and html[0].tagName == "SCRIPT"
-        $.getScript(src, =>
-          setTimeout =>
-            target_element.html(container.html())
-            window.document.write = write
-            container.remove()
-          , 1000
-        )
-      else
-        container.append(html)
-    container.append(@ads[placement])
+        console.log "Tried to write invalid html: #{string}"
+      target_element.append(html)
 
 module.exports = PulpAds
