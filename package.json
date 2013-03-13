@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Lazy load ads from Pulp",
   "main": "index.js",
+  "private": true,
   "scripts": { "pretest": "cake build", "prepublish": "cake build", "test": "node_modules/.bin/mocha -r expect.js"},
   "repository": {
     "type": "git",
