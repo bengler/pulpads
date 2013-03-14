@@ -15,7 +15,7 @@ class PulpAds
     dfd
 
   Ad: (placement, target_element) ->
-    target_element.empty()
+    window.AdtechAdVisibility = null
     loader = $("<iframe id='#{target_element.attr('id')}_loader' style='display: none;'></iframe>")
     $("body").append(loader)
     frame = $("##{target_element.attr('id')}_loader")[0].contentWindow
@@ -26,15 +26,19 @@ class PulpAds
     frame.top = window
     frame.window = window
     frame.parent = window
+    frame.document.addEventListener("DOMSubtreeModified", (event) =>
+        buffer = frame.document.body.innerHTML
+      , false);
     interval = setInterval =>
         buffer = frame.document.body.innerHTML
         if last_buffer == buffer
           clearInterval(interval)
-          buffer = buffer.replace(/<sc[r]ipt[\s\S]*?<\/sc[r]ipt>/gi,'').replace(/<style[\s\S]*?<\/style>/gi,'')
-          target_element.html($(buffer))
-          $("##{target_element.attr('id')}_loader").remove()
+          setTimeout ->
+            buffer = buffer.replace(/<sc[r]ipt[\s\S]*?<\/sc[r]ipt>/gi,'').replace(/<style[\s\S]*?<\/style>/gi,'')
+            target_element.html(buffer)
+          , 100
         else
           last_buffer = buffer
-      , 50
+      , 100
 
 module.exports = PulpAds
