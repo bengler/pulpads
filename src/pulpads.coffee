@@ -15,7 +15,6 @@ class PulpAds
     dfd
 
   Ad: (placement, target_element) ->
-    window.AdtechAdVisibility = null
     loader = $("<iframe id='#{target_element.attr('id')}_loader' style='display: none;'></iframe>")
     $("body").append(loader)
     frame = $("##{target_element.attr('id')}_loader")[0].contentWindow
@@ -36,9 +35,9 @@ class PulpAds
           setTimeout ->
             buffer = buffer.replace(/<sc[r]ipt[\s\S]*?<\/sc[r]ipt>/gi,'').replace(/<style[\s\S]*?<\/style>/gi,'')
             target_element.html(buffer)
-          , 100
+          , 1000
         else
           last_buffer = buffer
-      , 100
+      , 500
 
 module.exports = PulpAds
