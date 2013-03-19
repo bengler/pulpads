@@ -5,10 +5,20 @@ class PulpAds
     @pulp = options.pulp
     @realm = options.realm
     @publication = options.publication
+    @key = options.key
+    @placements = options.placements
 
   loadAds: ->
     dfd = $.Deferred()
-    @pulp.get("/#{@realm}/publications/#{@publication}/adtech").then (ads) =>
+    url = "/#{@realm}/publications/#{@publication}/adtech"
+    params = []
+    if @key
+      params.push "key=#{@key}"
+    if @placements
+      params.push "placements=#{@placements.join(',')}"
+    if params.length > 0
+      url += "?#{params.join('&')}"
+    @pulp.get(url).then (ads) =>
       @ads = ads
       dfd.resolve(@ads)
     $('#apiBackgroundAd').attr("style", "")
