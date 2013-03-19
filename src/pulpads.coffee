@@ -7,7 +7,8 @@ class PulpAds
     @publication = options.publication
     @key = options.key
     @placements = options.placements
-
+    @timings = {}
+    @buffers = {}
   loadAds: ->
     dfd = $.Deferred()
     url = "/#{@realm}/publications/#{@publication}/adtech"
@@ -24,30 +25,48 @@ class PulpAds
     $('#apiBackgroundAd').attr("style", "")
     dfd
 
+  updateNow: (placement) ->
+    @timings[placement] = new Date()
+
   Ad: (placement, target_element) ->
     loader = $("<iframe id='#{target_element.attr('id')}_loader' style='display: none;'></iframe>")
     $("body").append(loader)
-    frame = $("##{target_element.attr('id')}_loader")[0].contentWindow
-    frame.document.open()
+    @buffers[placement] = ""
+    frame = loader[0].contentWindow
+    frame.document.x_write = frame.document.write
+    frame.document.write = (string) =>
+      #@buffers[placement] += string
+      @updateNow(placement)
+      frame.document.x_write string
+      @updateNow(placement)
     frame.document.write "<body>#{@ads[placement]}</body>"
-    buffer = ""
-    last_buffer = "-"
-    frame.top = window
-    frame.window = window
-    frame.parent = window
-    frame.document.addEventListener("DOMSubtreeModified", (event) =>
-        buffer = frame.document.body.innerHTML
-      , false);
-    interval = setInterval =>
-        buffer = frame.document.body.innerHTML
-        if last_buffer == buffer
+
+    render = =>
+      buffer = frame.document.body.innerHTML.replace(/<sc[r]ipt[\s\S]*?<\/sc[r]ipt>/gi,'').replace(/<!--[\s\S]*?-->/gi,'').replace(/^\s+|\s+$/g,'')
+      buffer_html = $("")
+      try
+        buffer_html = $(buffer)
+      catch error
+
+      if target_element.html() != buffer and buffer_html.children().length > 0
+        target_element.html(buffer)
+      else if buffer_html.children().length < 1
+        $(frame.document.body).trigger("load")
+    if frame.document.addEventListener
+      frame.document.addEventListener("load", =>
+        render()
+      , true)
+      frame.document.addEventListener("domSubtreeModified", =>
+        render()
+      , true)
+    # IE 8 fallback
+    else
+      interval = setInterval =>
+        if new Date() - @timings[placement] > 1000
           clearInterval(interval)
-          setTimeout ->
-            buffer = buffer.replace(/<sc[r]ipt[\s\S]*?<\/sc[r]ipt>/gi,'').replace(/<style[\s\S]*?<\/style>/gi,'')
-            target_element.html(buffer)
-          , 1000
-        else
-          last_buffer = buffer
-      , 500
+          setTimeout =>
+            render()
+          , 500
+      , 5
 
 module.exports = PulpAds
