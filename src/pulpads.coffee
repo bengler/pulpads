@@ -28,6 +28,9 @@ class PulpAds
     @timings[placement] = new Date()
 
   Ad: (placement, target_element) ->
+    unless target_element and target_element.length > 0
+      console.log "No target container for ad #{placement}"
+      return
     target_element.html("")
     if $("apiBackgroundAd").lenth > 0
       $("apiBackgroundAd").style({})
