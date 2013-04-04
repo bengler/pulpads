@@ -29,6 +29,8 @@ class PulpAds
 
   Ad: (placement, target_element) ->
     target_element.html("")
+    if $("apiBackgroundAd").lenth > 0
+      $("apiBackgroundAd").style({})
     loader = $("<iframe id='#{target_element.attr('id')}_loader' style='display: none;'></iframe>")
     $("body").append(loader)
     frame = loader[0].contentWindow
