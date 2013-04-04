@@ -8,7 +8,6 @@ class PulpAds
     @key = options.key
     @placements = options.placements
     @timings = {}
-    @buffers = {}
   loadAds: ->
     dfd = $.Deferred()
     url = "/#{@realm}/publications/#{@publication}/adtech"
@@ -29,13 +28,12 @@ class PulpAds
     @timings[placement] = new Date()
 
   Ad: (placement, target_element) ->
+    target_element.html("")
     loader = $("<iframe id='#{target_element.attr('id')}_loader' style='display: none;'></iframe>")
     $("body").append(loader)
-    @buffers[placement] = ""
     frame = loader[0].contentWindow
     frame.document.x_write = frame.document.write
     frame.document.write = (string) =>
-      #@buffers[placement] += string
       @updateNow(placement)
       frame.document.x_write string
       @updateNow(placement)
@@ -43,11 +41,10 @@ class PulpAds
 
     render = =>
       buffer = frame.document.body.innerHTML.replace(/<sc[r]ipt[\s\S]*?<\/sc[r]ipt>/gi,'').replace(/<!--[\s\S]*?-->/gi,'').replace(/^\s+|\s+$/g,'')
-      buffer_html = $("")
+      buffer_html = $("<p></p>")
       try
         buffer_html = $(buffer)
       catch error
-
       if target_element.html() != buffer and buffer_html.children().length > 0
         target_element.html(buffer)
       else if buffer_html.children().length < 1
