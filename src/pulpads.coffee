@@ -52,6 +52,7 @@ class PulpAds
       catch error
       if target_element.html() != buffer and buffer_html.children().length > 0
         target_element.html(buffer)
+        frame.stop()
       else if buffer_html.children().length < 1
         $(frame.document.body).trigger("load")
     if frame.document.addEventListener
