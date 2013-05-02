@@ -53,7 +53,8 @@ class PulpAds
       if target_element.html() != buffer and buffer_html.children().length > 0
         target_element.html(buffer)
         setTimeout =>
-          frame.stop()
+          if frame.stop
+            frame.stop()
         , 1500
       else if buffer_html.children().length < 1
         $(frame.document.body).trigger("load")
