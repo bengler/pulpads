@@ -1,6 +1,6 @@
 {
   "name": "pulpads",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Lazy load ads from Pulp",
   "main": "index.js",
   "private": true,
