@@ -33,6 +33,7 @@ class PulpAds
       return
     target_element.html("")
     if $("#apiBackgroundAd").length > 0
+      $("#apiBackgroundAd").empty()
       $("#apiBackgroundAd").removeAttr("style")
     loader = $("<iframe id='#{target_element.attr('id')}_loader' style='display: none;'></iframe>")
     $("body").append(loader)
