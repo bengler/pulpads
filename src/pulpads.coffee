@@ -32,8 +32,8 @@ class PulpAds
       console.log "No target container for ad #{placement}"
       return
     target_element.html("")
-    if $("apiBackgroundAd").lenth > 0
-      $("apiBackgroundAd").style({})
+    if $("#apiBackgroundAd").length > 0
+      $("#apiBackgroundAd").style({})
     loader = $("<iframe id='#{target_element.attr('id')}_loader' style='display: none;'></iframe>")
     $("body").append(loader)
     frame = loader[0].contentWindow
